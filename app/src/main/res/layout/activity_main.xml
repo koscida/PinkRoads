@@ -9,21 +9,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         tools:context=".MainActivity">
 
 
+        <!-- Search Places Frag -->
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_medium">
+
+            <fragment
+                android:id="@+id/autocomplete_fragment"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </android.support.v7.widget.CardView>
 
         <!-- map -->
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_padding"
+            android:layout_height="fill_parent"
             android:orientation="vertical"
-            android:background="#aaa"
             android:id="@+id/place_map_parent">
 
             <fragment
@@ -33,35 +41,16 @@
                 android:layout_height="match_parent"/>
         </LinearLayout>
 
+
+        <!-- Selected Place: -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingBottom="@dimen/vertical_page_margin"
             android:paddingLeft="@dimen/horizontal_page_margin"
             android:paddingRight="@dimen/horizontal_page_margin"
             android:paddingTop="@dimen/vertical_page_margin">
-
-            <TextView
-                android:text="@string/intro_message"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:layout_marginBottom="@dimen/margin_medium">
-
-                <fragment
-                    android:id="@+id/autocomplete_fragment"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </android.support.v7.widget.CardView>
 
             <TextView
                 android:text="@string/selected_place"
