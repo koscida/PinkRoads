@@ -4,14 +4,15 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -77,7 +78,7 @@ public class MainActivity
     public final static String CREATIVE_SAFESPACE_KEY = "coco";
 
     public final int PLACE_PICKER_REQUEST = 1;
-    public final static String TAG = MainActivity.class.getSimpleName() + " ----------";
+    public final static String TAG = MainActivity.class.getSimpleName() + " -----------------------------";
     public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     // google maps directions api
@@ -85,17 +86,29 @@ public class MainActivity
     boolean showMenuExtras = false;
 
     LinearLayout linearLayout;
+    Toolbar toolbar;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*Log.d(TAG, findViewById(R.id.linearLayout2).toString());
+        Log.d(TAG, "test");*/
+
+
+       // context = this;
 
         /*
-        context = this;
-        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        Button button  = new Button(MainActivity.this);
+        Log.d(TAG,  Integer.toString(R.id.linearLayout2)) ;
+        linearLayout = (LinearLayout) this.findViewById(R.id.linearLayout2);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Log.d(TAG, linearLayout.toString());
+        Log.d(TAG, toolbar.toString());
+        */
+
+
+        /*Button button  = new Button(MainActivity.this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT );
         button.setLayoutParams(lp);
         button.setText("ADDED");
@@ -167,7 +180,11 @@ public class MainActivity
 
 
             mapReady = true;
-            drawMap();
+            //drawMap();
+
+            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13);
+            googleMap.animateCamera(yourLocation);
+            //Log.d(TAG, "Zoom - 1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,13 +193,21 @@ public class MainActivity
     }
 
     void drawMap() {
-        if(currentLocation.getLatitude() != 0 && currentLocation.getLongitude() != 0 && mapReady) {
             // zooming into current location
-            LatLng coordinate = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             // higher for more zoom
-            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, zoomLevel);
+            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13);
             googleMap.animateCamera(yourLocation);
-        }
+            //Log.d(TAG, "Zoom - 2");
+
+
+
+        /*
+        Log.d(TAG,  Integer.toString(R.id.linearLayout2));
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout2);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Log.d(TAG, linearLayout.toString());
+        Log.d(TAG, toolbar.toString());
+        */
     }
 
 
@@ -337,7 +362,15 @@ public class MainActivity
         // Do something
         if (direction.isOK()) {
             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-            googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, Color.RED));
+            googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, R.color.colorPrimaryDark));
+
+
+            // add button
+            Button btn = new Button(context);
+            btn.setText("testing");
+
+            linearLayout.addView(btn);
+
 
         }
     }

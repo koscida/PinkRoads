@@ -5,8 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/linearLayout"
     tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout2"
+        tools:targetApi="lollipop">
 
 
         <!-- toolbar -->
@@ -42,6 +48,6 @@
             android:layout_height="fill_parent"
             tools:layout="@layout/place_autocomplete_fragment" />
 
-
+    </LinearLayout>
 
 </LinearLayout>
