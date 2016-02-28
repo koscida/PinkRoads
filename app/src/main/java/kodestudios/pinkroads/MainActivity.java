@@ -18,6 +18,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -85,8 +86,10 @@ public class MainActivity
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
             // ACTUALLY ADDING ON MAP
-            Marker TP = googleMap.addMarker(new MarkerOptions().position(RITPoint).title("RIT"));
+            Marker TP = googleMap.addMarker(new MarkerOptions().position(RITPoint).title("RIT")
+                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")));
         }
+
         catch (Exception e) {
             e.printStackTrace();
         }
