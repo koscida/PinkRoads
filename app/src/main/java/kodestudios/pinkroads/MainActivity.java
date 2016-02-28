@@ -14,6 +14,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
+import java.util.Date;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -48,11 +49,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainActivity
         extends AppCompatActivity
         implements PlaceSelectionListener,  // used for map fragment
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener // used for last known gps location
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, // used for last known gps location
+        GoogleMap.OnInfoWindowClickListener
 {
 
-    // CREATING A POINT
-    static final LatLng RITPoint = new LatLng(43.085207, -77.671417);
 
 
     // create client for getting user's location
@@ -118,9 +118,18 @@ public class MainActivity
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
 
-            // ACTUALLY ADDING ON MAP
-            Marker TP = googleMap.addMarker(new MarkerOptions().position(RITPoint).title("RIT")
-                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")));
+           // Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
+                   // .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
+            MarkerInfo RIT = new MarkerInfo("Danger", "Danger! Keep off!", new Date(),
+                    43.084483,-77.678554);
+            Marker TP = googleMap.addMarker(new MarkerOptions().position(RIT.latLng).title(RIT.type)
+                    .icon(BitmapDescriptorFactory.fromAsset(RIT.icon)).snippet(RIT.message));
+            MarkerInfo PoliceStation = new MarkerInfo("Help", "Get some help!", new Date(),
+                    43.0758263,-77.683919);
+            Marker TP2 = googleMap.addMarker(new MarkerOptions().position(PoliceStation.latLng).title(PoliceStation.type)
+                    .icon(BitmapDescriptorFactory.fromAsset(PoliceStation.icon)).snippet(PoliceStation.message));
+
+
 
             mapReady = true;
             drawMap();
@@ -144,6 +153,8 @@ public class MainActivity
     /* **************************************************** */
     /*          Callback Methods for Autofill Search        */
     /* **************************************************** */
+
+
 
     /**
      * Callback invoked when a place has been selected from the PlaceAutocompleteFragment.
@@ -202,6 +213,15 @@ public class MainActivity
 
     }
 
+    /**
+     * Required method for implementing the marker info message
+     * @param marker
+     */
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, "Info window clicked",
+                Toast.LENGTH_SHORT).show();
+    }
     /**
      * Callback invoked when PlaceAutocompleteFragment encounters an error.
      */
