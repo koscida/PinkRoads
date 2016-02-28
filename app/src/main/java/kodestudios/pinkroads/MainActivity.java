@@ -33,7 +33,10 @@ public class MainActivity
         implements PlaceSelectionListener {
 
     public static final String TAG = "MainActivity";
+
+    // CREATING A POINT
     static final LatLng RITPoint = new LatLng(43.085207 , -77.671417);
+
     GoogleMap googleMap;
 
     private TextView mPlaceDetailsText;
@@ -58,12 +61,12 @@ public class MainActivity
 
         try {
             if (googleMap == null) {
-                googleMap = ((MapFragment) getFragmentManager().
-                        findFragmentById(R.id.map)).getMap();
+                googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
             }
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            Marker TP = googleMap.addMarker(new MarkerOptions().
-                    position(RITPoint).title("RIT"));
+
+            // ACTUALLY ADDING ON MAP
+            Marker TP = googleMap.addMarker(new MarkerOptions().position(RITPoint).title("RIT"));
         }
         catch (Exception e) {
             e.printStackTrace();
