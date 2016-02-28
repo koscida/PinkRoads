@@ -91,7 +91,7 @@ public class MainActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         /*
         context = this;
@@ -137,8 +137,8 @@ public class MainActivity
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
 
-           // Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
-                   // .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
+           Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
+                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
             MarkerInfo markerInfos[] = new MarkerInfo[10];
             markerInfos[0] = new MarkerInfo("Attack", "Danger! Keep off!", new Date(),
                     43.084483,-77.678554);
@@ -161,7 +161,7 @@ public class MainActivity
 
 
             for(int i=0; i<10;i++){
-                Marker TP = googleMap.addMarker(new MarkerOptions().position(markerInfos[i].latLng).title(markerInfos[i].type)
+                Marker TPp = googleMap.addMarker(new MarkerOptions().position(markerInfos[i].latLng).title(markerInfos[i].type)
                         .icon(BitmapDescriptorFactory.fromAsset(markerInfos[i].icon)).snippet(markerInfos[i].message+"\n"+markerInfos[i].date));
 
             }
