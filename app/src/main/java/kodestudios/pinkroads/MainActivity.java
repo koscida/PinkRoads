@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Date;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -34,12 +35,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements PlaceSelectionListener {
+        implements PlaceSelectionListener, GoogleMap.OnInfoWindowClickListener {
 
     public static final String TAG = "MainActivity";
 
-    // CREATING A POINT
-    static final LatLng RITPoint = new LatLng(43.085207 , -77.671417);
+
 
     GoogleMap googleMap;
 
@@ -86,8 +86,17 @@ public class MainActivity
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
             // ACTUALLY ADDING ON MAP
-            Marker TP = googleMap.addMarker(new MarkerOptions().position(RITPoint).title("RIT")
-                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")));
+           // Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
+                   // .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
+            MarkerInfo RIT = new MarkerInfo("Danger", "Danger! Keep off!", new Date(),
+                    43.084483,-77.678554);
+            Marker TP = googleMap.addMarker(new MarkerOptions().position(RIT.latLng).title(RIT.type)
+                    .icon(BitmapDescriptorFactory.fromAsset(RIT.icon)).snippet(RIT.message));
+            MarkerInfo PoliceStation = new MarkerInfo("Help", "Get some help!", new Date(),
+                    43.0758263,-77.683919);
+            Marker TP2 = googleMap.addMarker(new MarkerOptions().position(PoliceStation.latLng).title(PoliceStation.type)
+                    .icon(BitmapDescriptorFactory.fromAsset(PoliceStation.icon)).snippet(PoliceStation.message));
+
         }
 
         catch (Exception e) {
@@ -98,6 +107,8 @@ public class MainActivity
 
 
     }
+
+
 
 
     /**
@@ -129,6 +140,15 @@ public class MainActivity
 
     }
 
+    /**
+     * Required method for implementing the marker info message
+     * @param marker
+     */
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, "Info window clicked",
+                Toast.LENGTH_SHORT).show();
+    }
     /**
      * Callback invoked when PlaceAutocompleteFragment encounters an error.
      */
