@@ -21,7 +21,7 @@ public class MarkerInfo {
     LatLng latLng;
     String icon;
 
-    GoogleMap googleMap;
+    //GoogleMap googleMap;
 
     public MarkerInfo(){
         this.type = "Danger";

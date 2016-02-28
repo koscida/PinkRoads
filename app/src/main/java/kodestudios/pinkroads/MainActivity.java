@@ -151,8 +151,8 @@ public class MainActivity
             googleMap.setMyLocationEnabled(true);
             googleMap.setOnMapLoadedCallback(this);
 
-           Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
-                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
+           /*Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
+                    .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400")); */
             MarkerInfo markerInfos[] = new MarkerInfo[10];
             markerInfos[0] = new MarkerInfo("Attack", "Danger! Keep off!", new Date(),
                     43.084483,-77.678554);
