@@ -4,21 +4,20 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-import java.util.Date;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -37,6 +36,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 @SuppressWarnings("I/OpenGLRenderer")
 
 /**
@@ -50,7 +52,8 @@ public class MainActivity
         extends AppCompatActivity
         implements PlaceSelectionListener,  // used for map fragment
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, // used for last known gps location
-        GoogleMap.OnInfoWindowClickListener
+        GoogleMap.OnInfoWindowClickListener, // used for marker click on map
+        DirectionCallback   // used for map directions
 {
 
 
@@ -80,10 +83,26 @@ public class MainActivity
 
     // google maps directions api
 
+    boolean showMenuExtras = false;
+
+    LinearLayout linearLayout;
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+
+        /*
+        context = this;
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        Button button  = new Button(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT );
+        button.setLayoutParams(lp);
+        button.setText("ADDED");
+        linearLayout.addView(button);
+        */
+
 
         // Retrieve the PlaceAutocompleteFragment.
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -153,6 +172,8 @@ public class MainActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     void drawMap() {
@@ -181,15 +202,9 @@ public class MainActivity
         Log.d(TAG, "Place Selected: " + place.getName());
         destinationPlace = place;
 
-        // for now, toast the call, so we have some info
-        Context context = getApplicationContext();
-        Spanned s = formatPlaceDetails(getResources(), place.getName(), place.getId(), place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri());
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, s, duration);
-        toast.show();
-
         // add the place to the map
         Marker TP = googleMap.addMarker( new MarkerOptions().position(place.getLatLng()) );
+
         // form the url direction call
         String directionCallURL = "https://maps.googleapis.com/maps/api/directions/json?" +
                 "&key=" + GOOGLE_DIRECTIONS_API_KEY +
@@ -197,36 +212,13 @@ public class MainActivity
                 "&destination=" + destinationPlace.getLatLng().latitude + "," + destinationPlace.getLatLng().longitude;
         Log.d(TAG, directionCallURL);
 
-
-
-
-
-
+        // call the direction api
         GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
                 .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
                 .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
                 //.avoid(AvoidType.FERRIES)
-                //.avoid(AvoidType.HIGHWAYS)
-                .execute(new DirectionCallback() {
-                    @Override
-                    public void onDirectionSuccess(Direction direction) {
-                        if (direction.isOK()) {
-                            // Do something
-                        } else {
-                            // Do something
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        // Do something
-                    }
-                });
-
-
-
-
-
+                        //.avoid(AvoidType.HIGHWAYS)
+                .execute(this);
 
     }
 
@@ -236,8 +228,7 @@ public class MainActivity
      */
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(this, "Info window clicked",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Info window clicked", Toast.LENGTH_SHORT).show();
     }
     /**
      * Callback invoked when PlaceAutocompleteFragment encounters an error.
@@ -245,20 +236,7 @@ public class MainActivity
     @Override
     public void onError(Status status) {
         Log.d(TAG, "onError: Status = " + status.toString());
-
-        Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(),
-                Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Helper method to format information about a place nicely.
-     */
-    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id, CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        Log.d(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-
+        Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -345,10 +323,6 @@ public class MainActivity
     public void handleNewLocation(Location location) {
         currentLocation = location;
         drawMap();
-        /*Log.d(TAG, currentLocation.toString());
-        Log.d(TAG, new Double(currentLatitude).toString());
-        Log.d(TAG, new Double(currentLongitude).toString());*/
-
     }
 
     public void handleOnConnection() {}
@@ -357,8 +331,28 @@ public class MainActivity
 
 
 
-    /* ****************************************** */
-    /*          Methods Google Map API            */
-    /* ****************************************** */
+    /* ************************************************************** */
+    /*          Methods Google Directions  from akexorcist            */
+    /* ************************************************************** */
+    // directions were successfully received
+    @Override
+    public void onDirectionSuccess(Direction direction) {
+        String status = direction.getStatus();
+        // Do something
+        if (direction.isOK()) {
+            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+            googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, Color.RED));
+
+        }
+    }
+
+
+
+
+    @Override
+    public void onDirectionFailure(Throwable t) {
+        Log.d(TAG, "onError: Status = " + t.getMessage());
+        Toast.makeText(this, "Place selection failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+    }
 
 }
