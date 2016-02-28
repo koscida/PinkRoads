@@ -12,11 +12,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.Date;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.model.Direction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -58,19 +60,25 @@ public class MainActivity
     public LocationRequest mLocationRequest;
     public GoogleApiClient mGoogleApiClient;
     public AutoCompleteAdapter mAdapter;
-    public Location currentLocation;
-    public double currentLatitude = 0;
-    public double currentLongitude = 0;
     boolean mapReady = false;
+
+    // create location specific variables
+    public Location currentLocation;
+    public Place destinationPlace;
+    public int zoomLevel = 13;
 
     public final static String RESERVED_SEARCH_PLACE = "com.kodestudios.safespace2.RESERVED_SEARCH_PLACE";
     public final static String RESERVED_PLACE_MYPLACE = "com.kodestudios.safespace2.RESERVED_PLACE_MYPLACE";
     public final static String GOOGLE_PLACES_API_KEY = "AIzaSyAdsK9u-kgmOG4hiAqpDI0t4koyQwlNbBU";
     public final static String GOOGLE_MAP_API_KEY = "AIzaSyAVmMwc_7180YL1gazX_HDyqzlRMTftbA8";
+    public final static String GOOGLE_DIRECTIONS_API_KEY = "AIzaSyDX7NUWOqwpCJpgYUkxcd2MVYJNpFpTbzc";
     public final static String CREATIVE_SAFESPACE_KEY = "coco";
+
     public final int PLACE_PICKER_REQUEST = 1;
     public final static String TAG = MainActivity.class.getSimpleName() + " ----------";
     public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
+    // google maps directions api
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +109,14 @@ public class MainActivity
             if (googleMap == null) {
                 googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
             }
+            // check for location permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+            }
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMyLocationEnabled(true);
 
            // Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
                    // .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
@@ -140,11 +155,11 @@ public class MainActivity
     }
 
     void drawMap() {
-        if(currentLatitude != 0 && currentLongitude != 0 && mapReady) {
+        if(currentLocation.getLatitude() != 0 && currentLocation.getLongitude() != 0 && mapReady) {
             // zooming into current location
-            LatLng coordinate = new LatLng(currentLatitude, currentLongitude);
+            LatLng coordinate = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             // higher for more zoom
-            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 13);
+            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, zoomLevel);
             googleMap.animateCamera(yourLocation);
         }
     }
@@ -162,23 +177,56 @@ public class MainActivity
      */
     @Override
     public void onPlaceSelected(Place place) {
-        Log.i(TAG, "Place Selected: " + place.getName());
+        Log.d(TAG, "Place Selected: " + place.getName());
+        destinationPlace = place;
 
-        // Format the returned place's details and display them in the TextView.
-        //mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
-
-        CharSequence attributions = place.getAttributions();
-        if (!TextUtils.isEmpty(attributions)) {
-            //mPlaceAttribution.setText(Html.fromHtml(attributions.toString()));
-        } else {
-            //mPlaceAttribution.setText("");
-        }
-
+        // for now, toast the call, so we have some info
         Context context = getApplicationContext();
         Spanned s = formatPlaceDetails(getResources(), place.getName(), place.getId(), place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri());
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, s, duration);
         toast.show();
+
+        // add the place to the map
+        Marker TP = googleMap.addMarker( new MarkerOptions().position(place.getLatLng()) );
+        // form the url direction call
+        String directionCallURL = "https://maps.googleapis.com/maps/api/directions/json?" +
+                "&key=" + GOOGLE_DIRECTIONS_API_KEY +
+                "&origin=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude() +
+                "&destination=" + destinationPlace.getLatLng().latitude + "," + destinationPlace.getLatLng().longitude;
+        Log.d(TAG, directionCallURL);
+
+
+
+
+
+
+        GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
+                .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
+                //.avoid(AvoidType.FERRIES)
+                //.avoid(AvoidType.HIGHWAYS)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction) {
+                        if (direction.isOK()) {
+                            // Do something
+                        } else {
+                            // Do something
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something
+                    }
+                });
+
+
+
+
+
+
     }
 
     /**
@@ -195,7 +243,7 @@ public class MainActivity
      */
     @Override
     public void onError(Status status) {
-        Log.e(TAG, "onError: Status = " + status.toString());
+        Log.d(TAG, "onError: Status = " + status.toString());
 
         Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(),
                 Toast.LENGTH_SHORT).show();
@@ -205,7 +253,7 @@ public class MainActivity
      * Helper method to format information about a place nicely.
      */
     private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id, CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
+        Log.d(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
                 websiteUri));
         return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
                 websiteUri));
@@ -295,8 +343,6 @@ public class MainActivity
 
     public void handleNewLocation(Location location) {
         currentLocation = location;
-        currentLatitude = location.getLatitude();
-        currentLongitude = location.getLongitude();
         drawMap();
         /*Log.d(TAG, currentLocation.toString());
         Log.d(TAG, new Double(currentLatitude).toString());
@@ -309,5 +355,9 @@ public class MainActivity
 
 
 
+
+    /* ****************************************** */
+    /*          Methods Google Map API            */
+    /* ****************************************** */
 
 }
