@@ -22,4 +22,6 @@
     <dimen name="activity_padding">@dimen/margin</dimen>
     <dimen name="activity_margin">@dimen/margin</dimen>
 
+    <dimen name="toolbar_size">60dp</dimen>
+
 </resources>

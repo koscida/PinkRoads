@@ -1,5 +1,6 @@
 package kodestudios.pinkroads;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,16 +49,15 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         // Retrieve the PlaceAutocompleteFragment.
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         // Register a listener to receive callbacks when a place has been selected or an error has
         // occurred.
         autocompleteFragment.setOnPlaceSelectedListener(this);
 
         // Retrieve the TextViews that will display details about the selected place.
-        mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
-        mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
+        //mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
+        //mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
 
         try {
             if (googleMap == null) {
@@ -72,6 +72,8 @@ public class MainActivity
             e.printStackTrace();
         }
 
+
+
     }
 
 
@@ -83,15 +85,25 @@ public class MainActivity
         Log.i(TAG, "Place Selected: " + place.getName());
 
         // Format the returned place's details and display them in the TextView.
-        mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),
-                place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
+        //mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
 
         CharSequence attributions = place.getAttributions();
         if (!TextUtils.isEmpty(attributions)) {
-            mPlaceAttribution.setText(Html.fromHtml(attributions.toString()));
+            //mPlaceAttribution.setText(Html.fromHtml(attributions.toString()));
         } else {
-            mPlaceAttribution.setText("");
+            //mPlaceAttribution.setText("");
         }
+
+
+
+
+        Context context = getApplicationContext();
+        Spanned s = formatPlaceDetails(getResources(), place.getName(), place.getId(), place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri());
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, s, duration);
+        toast.show();
+
+
     }
 
     /**
