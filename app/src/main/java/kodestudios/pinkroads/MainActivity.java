@@ -9,13 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +53,7 @@ import java.util.Date;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements PlaceSelectionListener,  // used for map fragment
+        implements PlaceSelectionListener,GoogleMap.OnMapLoadedCallback,  // used for map fragment
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, // used for last known gps location
         GoogleMap.OnInfoWindowClickListener, // used for marker click on map
         DirectionCallback   // used for map directions
@@ -81,11 +84,13 @@ public class MainActivity
     public final static String TAG = MainActivity.class.getSimpleName() + " -----------------------------";
     public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
+    Polyline polyLine = null;
+
     // google maps directions api
 
     boolean showMenuExtras = false;
 
-    LinearLayout linearLayout;
+    LinearLayout buttonLayout;
     Toolbar toolbar;
     Context context;
 
@@ -144,6 +149,7 @@ public class MainActivity
             }
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(true);
+            googleMap.setOnMapLoadedCallback(this);
 
            Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
                     .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
@@ -185,17 +191,35 @@ public class MainActivity
             e.printStackTrace();
         }
 
+        // for testing
+        //addButtons();
+    }
 
+
+    /* **************************************************** */
+    /*          Callback Methods for Map         */
+    /* **************************************************** */
+    @Override
+    public void onMapLoaded() {
+        if (googleMap != null) {
+
+            /*
+            Log.d(TAG,  Integer.toString(R.id.linearLayout));
+            linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Log.d(TAG, linearLayout.toString());
+            Log.d(TAG, toolbar.toString());
+            */
+
+        }
     }
 
     void drawMap() {
-            // zooming into current location
-            // higher for more zoom
-            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13);
-            googleMap.animateCamera(yourLocation);
-            //Log.d(TAG, "Zoom - 2");
-
-
+        // zooming into current location
+        // higher for more zoom
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13);
+        googleMap.animateCamera(yourLocation);
+        //Log.d(TAG, "Zoom - 2");
 
         /*
         Log.d(TAG,  Integer.toString(R.id.linearLayout2));
@@ -205,6 +229,7 @@ public class MainActivity
         Log.d(TAG, toolbar.toString());
         */
     }
+
 
 
 
@@ -220,7 +245,7 @@ public class MainActivity
         destinationPlace = place;
 
         // add the place to the map
-        Marker TP = googleMap.addMarker( new MarkerOptions().position(place.getLatLng()) );
+        Marker TP = googleMap.addMarker(new MarkerOptions().position(place.getLatLng()));
 
         // form the url direction call
         String directionCallURL = "https://maps.googleapis.com/maps/api/directions/json?" +
@@ -233,11 +258,65 @@ public class MainActivity
         GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
                 .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
                 .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
-                //.avoid(AvoidType.FERRIES)
+                        //.avoid(AvoidType.FERRIES)
                         //.avoid(AvoidType.HIGHWAYS)
                 .execute(this);
 
+        addButtons();
     }
+
+
+    public void addButtons() {
+
+        buttonLayout = (LinearLayout) this.findViewById(R.id.buttonLayout);
+        buttonLayout.setVisibility(View.VISIBLE);
+
+        ViewGroup.LayoutParams params = buttonLayout.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        buttonLayout.setLayoutParams(params);
+
+    }
+
+    public void destinationWalk(View view) {
+        Log.d(TAG, "in walk destination");
+        // call the direction api
+        GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
+                .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
+                .transportMode(TransportMode.WALKING)
+                .execute(this);
+    }
+
+    public void destinationBike(View view) {
+        Log.d(TAG, "in bike destination");
+        // call the direction api
+        GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
+                .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
+                .transportMode(TransportMode.BICYCLING)
+                .execute(this);
+    }
+
+    public void destinationBus(View view) {
+        Log.d(TAG, "in bus destination");
+        // call the direction api
+        GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
+                .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
+                .transportMode(TransportMode.TRANSIT)
+                .execute(this);
+    }
+
+    public void destinationCar(View view) {
+        Log.d(TAG, "in car destination");
+        // call the direction api
+        GoogleDirection.withServerKey(GOOGLE_DIRECTIONS_API_KEY)
+                .from(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .to(new LatLng(destinationPlace.getLatLng().latitude, destinationPlace.getLatLng().longitude))
+                .transportMode(TransportMode.DRIVING)
+                .execute(this);
+    }
+
 
     /**
      * Required method for implementing the marker info message
@@ -357,16 +436,11 @@ public class MainActivity
         String status = direction.getStatus();
         // Do something
         if (direction.isOK()) {
+            if(polyLine != null)
+                polyLine.remove();
+
             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-            googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, R.color.colorPrimaryDark));
-
-
-            // add button
-            Button btn = new Button(context);
-            btn.setText("testing");
-
-            linearLayout.addView(btn);
-
+            polyLine = googleMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, R.color.colorPrimary));
 
         }
     }

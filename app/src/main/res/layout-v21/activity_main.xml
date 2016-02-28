@@ -30,9 +30,87 @@
 
         </Toolbar>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/buttonLayout"
+        android:orientation="vertical"
+        android:background="#fafafa"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttons"
+            android:orientation="horizontal">
+
+            <!--
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="Directions"
+                android:textOff="Location"
+                android:id="@+id/locButton"
+                android:backgroundTint="@color/colorPrimarySuperLight"/>
+-->
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Walk"
+                android:id="@+id/walkButton"
+                android:backgroundTint="@color/colorPrimarySuperLight"
+                android:onClick="destinationWalk"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bike"
+                android:id="@+id/bikeButton"
+                android:backgroundTint="@color/colorPrimarySuperLight"
+                android:onClick="destinationBike"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bus"
+                android:id="@+id/busButton"
+                android:backgroundTint="@color/colorPrimarySuperLight"
+                android:onClick="destinationBus"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Car"
+                android:id="@+id/carButton"
+                android:backgroundTint="@color/colorPrimarySuperLight"
+                android:onClick="destinationCar"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sliderLayout"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/marginHalf"
+                android:text="Danger Bar: "/>
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 
         <!-- map -->
-        <fragment
+
+
+    <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="fill_parent"
