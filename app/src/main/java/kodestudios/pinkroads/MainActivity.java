@@ -139,15 +139,31 @@ public class MainActivity
 
            // Marker TP = googleMap.addMarker(new MarkerOptions().position(new LatLng(43.084483,-77.678554)).title("RIT")
                    // .icon(BitmapDescriptorFactory.fromAsset("images.jpg")).snippet("Population: 5,137,400"));
-            MarkerInfo RIT = new MarkerInfo("Danger", "Danger! Keep off!", new Date(),
+            MarkerInfo markerInfos[] = new MarkerInfo[10];
+            markerInfos[0] = new MarkerInfo("Danger", "Danger! Keep off!", new Date(),
                     43.084483,-77.678554);
-            Marker TP = googleMap.addMarker(new MarkerOptions().position(RIT.latLng).title(RIT.type)
-                    .icon(BitmapDescriptorFactory.fromAsset(RIT.icon)).snippet(RIT.message));
-            MarkerInfo PoliceStation = new MarkerInfo("Help", "Get some help!", new Date(),
+            markerInfos[1] = new MarkerInfo("Help", "Get some help!", new Date(),
                     43.0758263,-77.683919);
-            Marker TP2 = googleMap.addMarker(new MarkerOptions().position(PoliceStation.latLng).title(PoliceStation.type)
-                    .icon(BitmapDescriptorFactory.fromAsset(PoliceStation.icon)).snippet(PoliceStation.message));
+            markerInfos[2] = new MarkerInfo("Danger", "Danger! Keep off!", new Date(),
+                    43.087079,-77.6565819);
+            markerInfos[3] = new MarkerInfo("Help", "Get some help!", new Date(),
+                    43.0871361,-77.6633631);
+            markerInfos[4] = new MarkerInfo("Danger", "Keep off!", new Date(),
+                    43.1094826,-77.6784479);
+            markerInfos[5] = new MarkerInfo("Help", "Get some help!", new Date(),
+                    43.1019002,-77.6398241);
+            markerInfos[6] = new MarkerInfo("Danger", "Keep off!", new Date(),
+                    43.1028089,-77.6235807);
+            markerInfos[7] = new MarkerInfo("Danger", "Keep off!", new Date(),
+                    43.1222953,-77.6727617);
+            markerInfos[8] = new MarkerInfo("Help", "Get some help!", new Date(),
+                    43.1076937,-77.6678991);
 
+
+            for(int i=0; i<10;i++){
+                Marker TP = googleMap.addMarker(new MarkerOptions().position(markerInfos[i].latLng).title(markerInfos[i].type)
+                        .icon(BitmapDescriptorFactory.fromAsset(markerInfos[i].icon)).snippet(markerInfos[i].message));
+            }
 
 
             mapReady = true;
