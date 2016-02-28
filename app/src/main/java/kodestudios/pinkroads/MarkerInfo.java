@@ -36,10 +36,19 @@ public class MarkerInfo {
         this.message = message;
         this.date = date;
         latLng = new LatLng(lat,lng);
-        if(type == "Danger"){
-            this.icon = "images.jpg";
-        } else {
-            this.icon = "images2.png";
+        if(type == "Attack"){
+            this.icon = "Attack.png";
+        } else if(type == "EmergencyButton"){
+            this.icon = "EmergencyButton.png";
+        }
+        else if(type == "GangsHangout"){
+            this.icon = "GangsHangout.png";
+        }
+        else if(type == "StoreHours"){
+            this.icon = "StoreHours.png";
+        }
+        else if(type == "PoliceStation"){
+            this.icon = "PoliceStation.png";
         }
     }
 
