@@ -170,7 +170,7 @@ public class MainActivity
 
             for(int i=0; i<10;i++){
                 Marker TPp = googleMap.addMarker(new MarkerOptions().position(markerInfos[i].latLng).title(markerInfos[i].type)
-                        .icon(BitmapDescriptorFactory.fromAsset(markerInfos[i].icon)).snippet(markerInfos[i].message+"\n"+markerInfos[i].date));
+                        .icon(BitmapDescriptorFactory.fromAsset(markerInfos[i].icon)).snippet(markerInfos[i].message+" "+markerInfos[i].date));
 
             }
 
