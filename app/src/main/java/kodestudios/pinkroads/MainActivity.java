@@ -28,6 +28,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Created by kosba on 02/27/16.
  *
  * map tutorial from: http://www.tutorialspoint.com/android/android_google_maps.htm
+ * map search frag: https://github.com/googlesamples/android-play-places
+ * tutorial for toolbar: http://www.101apps.co.za/index.php/articles/using-toolbars-in-your-apps.html
  */
 public class MainActivity
         extends AppCompatActivity
@@ -59,6 +61,23 @@ public class MainActivity
         //mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
         //mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
 
+        // Create an instance of GoogleAPIClient.
+        // this looks for the user's last known geo-location
+        /*GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .setAccountName("users.account.name@gmail.com")
+                .build();
+        mGoogleApiClient.connect();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }*/
+
+        // creates the map that fills up the entire page
         try {
             if (googleMap == null) {
                 googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -71,6 +90,7 @@ public class MainActivity
         catch (Exception e) {
             e.printStackTrace();
         }
+
 
 
 
