@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -91,7 +90,7 @@ public class MainActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         /*
         context = this;
@@ -190,9 +189,6 @@ public class MainActivity
     /* **************************************************** */
     /*          Callback Methods for Autofill Search        */
     /* **************************************************** */
-
-
-
     /**
      * Callback invoked when a place has been selected from the PlaceAutocompleteFragment.
      */
@@ -344,8 +340,6 @@ public class MainActivity
 
         }
     }
-
-
 
 
     @Override
